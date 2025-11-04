@@ -114,6 +114,18 @@ LANGID CEXEBuild::ParseLangIdParameter(const LineParser&line, int token)
   return lid;
 }
 
+static BOOL GetFileTimeLocal(HANDLE hFile, FILETIME* pft)
+{
+	//added by DaveB: Change UTC date to Local date
+
+	FILETIME ft0;
+	BOOL ok = GetFileTime(hFile,NULL,NULL,&ft0);
+	if (ok) {
+		ok = FileTimeToLocalFileTime(&ft0, pft);
+	}
+	return ok;
+}
+
 int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
 {
   NStreamLineReader linereader(Strm);
@@ -3997,7 +4009,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (hFile != INVALID_HANDLE_VALUE)
         {
           FILETIME ft;
-          if (GetFileTime(hFile,NULL,NULL,&ft))
+          if (GetFileTimeLocal(hFile,&ft))
             flag=1, high=ft.dwHighDateTime, low=ft.dwLowDateTime;
           CloseHandle(hFile);
         }
@@ -5414,7 +5426,7 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
     {
 #ifdef _WIN32
       FILETIME ft;
-      if (GetFileTime(hFile,NULL,NULL,&ft))
+      if (GetFileTimeLocal(hFile,&ft))
       {
         PULONGLONG fti = (PULONGLONG) &ft;
         *fti -= *fti % 20000000; // FAT write time has a resolution of 2 seconds

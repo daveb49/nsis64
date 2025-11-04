@@ -585,7 +585,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf3(_T("File: wrote %d to \"%s\""),ret,buf0);
 
         if (parm3 != 0xffffffff || parm4 != 0xffffffff)
-          SetFileTime(hOut,(FILETIME*)(lent.offsets+3),NULL,(FILETIME*)(lent.offsets+3));
+        {		//added by DaveB: Change local date back to UTC date
+          FILETIME ft;
+          LocalFileTimeToFileTime((FILETIME*)(lent.offsets+3), &ft);
+          SetFileTime(hOut,&ft,NULL,&ft);
+        }
 
         CloseHandle(hOut);
 
