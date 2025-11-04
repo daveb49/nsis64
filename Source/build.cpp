@@ -128,6 +128,9 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
 
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
   definedlist.add(_T("NSIS_PACKEDVERSION"), NSIS_PACKEDVERSION);
+  definedlist.add(_T("NSIS_DATE_FIX_VERSION"), NSIS_VERSION); //added by DaveB
+  				// define this symbol so our scripts can check for it and abort if
+  				// we aren't using the version with the date fix in it
 
 #ifdef TARGET_ARCH
   m_target_type=(TARGETTYPE)TARGET_ARCH;
